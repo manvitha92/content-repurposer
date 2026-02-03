@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Wand2, FileText, Twitter, Linkedin, Video, Image, Copy, Check, Trash2, History, Sparkles, Upload } from 'lucide-react';
+import { Wand2, FileText, Twitter, Linkedin, Video, Image, Copy, Check, Trash2, History, Sparkles } from 'lucide-react';
+
+// Backend API URL - change this to your backend deployment URL
+const API_URL = process.env.REACT_APP_API_URL || '/api/repurpose';
 
 export default function ContentRepurposer() {
   const [inputContent, setInputContent] = useState('');
@@ -31,24 +34,24 @@ export default function ContentRepurposer() {
     loadHistory();
   }, []);
 
-  const loadHistory = async () => {
+  const loadHistory = () => {
     try {
-      const keys = await window.storage.list('repurpose:');
-      if (keys && keys.keys) {
-        const historyItems = await Promise.all(
-          keys.keys.slice(0, 10).map(async (key) => {
-            try {
-              const result = await window.storage.get(key);
-              return result ? JSON.parse(result.value) : null;
-            } catch {
-              return null;
-            }
-          })
-        );
-        setHistory(historyItems.filter(Boolean).sort((a, b) => b.timestamp - a.timestamp));
+      const savedHistory = localStorage.getItem('repurpose_history');
+      if (savedHistory) {
+        setHistory(JSON.parse(savedHistory));
       }
     } catch (error) {
-      console.log('No history found yet');
+      console.log('No history found');
+    }
+  };
+
+  const saveToHistory = (item) => {
+    try {
+      const newHistory = [item, ...history].slice(0, 10);
+      localStorage.setItem('repurpose_history', JSON.stringify(newHistory));
+      setHistory(newHistory);
+    } catch (error) {
+      console.log('Error saving history');
     }
   };
 
@@ -61,86 +64,56 @@ export default function ContentRepurposer() {
   };
 
   const repurposeContent = async () => {
-    if (!inputContent.trim() || selectedFormats.length === 0) return;
+    if (!inputContent.trim() || selectedFormats.length === 0) {
+      alert('Please enter content and select at least one format.');
+      return;
+    }
 
     setIsLoading(true);
     setResults(null);
 
     try {
-      const formatInstructions = selectedFormats.map(formatId => {
-        const formatMap = {
-          tweet: 'a Twitter thread (3-5 tweets, each under 280 characters, numbered, engaging hooks)',
-          linkedin: 'a LinkedIn post (professional, 150-200 words, with line breaks for readability, include relevant hashtags)',
-          video: 'a video script (with intro hook, main points with timestamps, and outro call-to-action)',
-          instagram: 'an Instagram caption (engaging, 125-150 words, with emojis and relevant hashtags)'
-        };
-        return formatMap[formatId];
-      }).join(', ');
-
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
+      // Call backend API
+      const response = await fetch(API_URL, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [
-            {
-              role: "user",
-              content: `Transform the following content into ${formatInstructions}.
-
-Tone: ${tone}
-
-Original Content:
-${inputContent}
-
-Return ONLY a JSON object with this exact structure (no markdown, no preamble):
-{
-  "tweet": "...",
-  "linkedin": "...",
-  "video": "...",
-  "instagram": "..."
-}
-
-Only include the formats I requested: ${selectedFormats.join(', ')}. Make each version unique and optimized for its platform.`
-            }
-          ],
+          content: inputContent,
+          formats: selectedFormats,
+          tone: tone
         })
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to repurpose content');
+      }
+
       const data = await response.json();
-      const textContent = data.content
-        .filter(item => item.type === "text")
-        .map(item => item.text)
-        .join("\n");
+      
+      if (!data.success) {
+        throw new Error('Failed to repurpose content');
+      }
 
-      const cleanJson = textContent.replace(/```json|```/g, "").trim();
-      const parsedResults = JSON.parse(cleanJson);
-
-      const formattedResults = selectedFormats.map(formatId => ({
-        format: formatId,
-        content: parsedResults[formatId] || "Content generation failed"
-      }));
-
-      setResults(formattedResults);
+      setResults(data.results);
 
       // Save to history
       const historyItem = {
-        id: `repurpose:${Date.now()}`,
+        id: Date.now(),
         timestamp: Date.now(),
         originalContent: inputContent.substring(0, 200) + (inputContent.length > 200 ? '...' : ''),
         formats: selectedFormats,
         tone: tone,
-        results: formattedResults
+        results: data.results
       };
 
-      await window.storage.set(historyItem.id, JSON.stringify(historyItem));
-      loadHistory();
+      saveToHistory(historyItem);
 
     } catch (error) {
       console.error("Repurposing error:", error);
-      alert("Failed to repurpose content. Please try again.");
+      alert(error.message || 'Failed to repurpose content. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -160,15 +133,10 @@ Only include the formats I requested: ${selectedFormats.join(', ')}. Make each v
     setShowHistory(false);
   };
 
-  const clearHistory = async () => {
-    if (!confirm('Clear all history?')) return;
-    try {
-      for (const item of history) {
-        await window.storage.delete(item.id);
-      }
+  const clearHistory = () => {
+    if (window.confirm('Clear all history?')) {
+      localStorage.removeItem('repurpose_history');
       setHistory([]);
-    } catch (error) {
-      console.error('Failed to clear history');
     }
   };
 

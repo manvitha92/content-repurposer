@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Wand2, FileText, Twitter, Linkedin, Video, Image, Copy, Check, Trash2, History, Sparkles } from 'lucide-react';
 
-// Backend API URL - change this to your backend deployment URL
-const API_URL = process.env.REACT_APP_API_URL || '/api/repurpose';
+// Backend API URL - will use environment variable or fallback to relative path
+const API_URL = process.env.REACT_APP_API_URL || 'https://content-repurposer-backend.vercel.app/api/repurpose';
 
 export default function ContentRepurposer() {
   const [inputContent, setInputContent] = useState('');
@@ -73,6 +73,8 @@ export default function ContentRepurposer() {
     setResults(null);
 
     try {
+      console.log('Calling API:', API_URL);
+      
       // Call backend API
       const response = await fetch(API_URL, {
         method: 'POST',
@@ -86,12 +88,16 @@ export default function ContentRepurposer() {
         })
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to repurpose content');
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to repurpose content: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('Response data:', data);
       
       if (!data.success) {
         throw new Error('Failed to repurpose content');
@@ -113,7 +119,7 @@ export default function ContentRepurposer() {
 
     } catch (error) {
       console.error("Repurposing error:", error);
-      alert(error.message || 'Failed to repurpose content. Please try again.');
+      alert(`Failed to repurpose content: ${error.message}\n\nPlease check the browser console for more details.`);
     } finally {
       setIsLoading(false);
     }

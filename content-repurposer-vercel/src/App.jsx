@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Wand2, FileText, Twitter, Linkedin, Video, Image, Copy, Check, Trash2, History, Sparkles, Mail, FileCode, Mic, TrendingUp, Newspaper, BookOpen } from 'lucide-react';
-
+import jsPDF from 'jspdf';
 // Backend API URL - will use environment variable or fallback to relative path
 const API_URL = process.env.REACT_APP_API_URL || 'https://content-repurposer-backend.vercel.app/api/repurpose';
 
@@ -135,6 +135,78 @@ export default function ContentRepurposer() {
     navigator.clipboard.writeText(text);
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 2000);
+  };
+  // ENHANCED: Export to PDF
+  const exportToPDF = () => {
+    if (!results) return;
+
+    const doc = new jsPDF();
+    let yPosition = 20;
+
+    doc.setFontSize(20);
+    doc.text('Content Repurposer Results', 20, yPosition);
+    yPosition += 15;
+
+    doc.setFontSize(10);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, yPosition);
+    yPosition += 10;
+
+    results.forEach((result) => {
+      const format = formats.find(f => f.id === result.format);
+      
+      if (yPosition > 270) {
+        doc.addPage();
+        yPosition = 20;
+      }
+
+      doc.setFontSize(14);
+      doc.text(format.name, 20, yPosition);
+      yPosition += 8;
+
+      doc.setFontSize(10);
+      const lines = doc.splitTextToSize(result.content, 170);
+      doc.text(lines, 20, yPosition);
+      yPosition += lines.length * 5 + 10;
+    });
+
+    doc.save('content-repurposer-results.pdf');
+  };
+
+  // ENHANCED: Copy all results
+  const copyAllResults = () => {
+    if (!results) return;
+    
+    const allText = results.map(r => {
+      const format = formats.find(f => f.id === r.format);
+      return `=== ${format.name} ===\n\n${r.content}\n\n`;
+    }).join('\n');
+    
+    navigator.clipboard.writeText(allText);
+    alert('✅ All results copied to clipboard!');
+  };
+
+  // ENHANCED: Export to CSV
+  const exportToCSV = () => {
+    if (!results) return;
+
+    const csvContent = [
+      ['Format', 'Content', 'Character Count'],
+      ...results.map(r => {
+        const format = formats.find(f => f.id === r.format);
+        return [
+          format.name,
+          `"${r.content.replace(/"/g, '""')}"`,
+          r.content.length
+        ];
+      })
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'content-repurposer-results.csv';
+    a.click();
   };
 
   const loadFromHistory = (item) => {

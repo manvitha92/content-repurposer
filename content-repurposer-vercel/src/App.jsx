@@ -551,7 +551,92 @@ export default function ContentRepurposer() {
                 <Sparkles size={28} color="#667eea" />
                 Repurposed Content
               </h2>
+              <h2 style={{ 
+                fontSize: '1.75rem', 
+                fontWeight: '600',
+                color: '#1a202c',
+                marginBottom: '2rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem'
+              }}>
+                <Sparkles size={28} color="#667eea" />
+                Repurposed Content
+              </h2>
 
+              {/* ADD THIS EXPORT TOOLBAR */}
+              <div style={{
+                display: 'flex',
+                gap: '1rem',
+                marginBottom: '2rem',
+                flexWrap: 'wrap'
+              }}>
+                <button
+                  onClick={exportToPDF}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem 1.5rem',
+                    background: '#EF4444',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                  📄 Download PDF
+                </button>
+
+                <button
+                  onClick={exportToCSV}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem 1.5rem',
+                    background: '#10B981',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                  📊 Download CSV
+                </button>
+
+                <button
+                  onClick={copyAllResults}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem 1.5rem',
+                    background: '#3B82F6',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                  📋 Copy All
+                </button>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {results.map((result, index) => {
                   const format = formats.find(f => f.id === result.format);

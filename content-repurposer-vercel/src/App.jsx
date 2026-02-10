@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wand2, FileText, Twitter, Linkedin, Video, Image, Copy, Check, Trash2, History, Sparkles } from 'lucide-react';
+import { Wand2, FileText, Twitter, Linkedin, Video, Image, Copy, Check, Trash2, History, Sparkles, Mail, FileCode, Mic, TrendingUp, Newspaper, BookOpen } from 'lucide-react';
 
 // Backend API URL - will use environment variable or fallback to relative path
 const API_URL = process.env.REACT_APP_API_URL || 'https://content-repurposer-backend.vercel.app/api/repurpose';
@@ -15,11 +15,17 @@ export default function ContentRepurposer() {
   const [showHistory, setShowHistory] = useState(false);
 
   const formats = [
-    { id: 'tweet', name: 'Twitter Thread', icon: Twitter, color: '#1DA1F2' },
-    { id: 'linkedin', name: 'LinkedIn Post', icon: Linkedin, color: '#0A66C2' },
-    { id: 'video', name: 'Video Script', icon: Video, color: '#FF0000' },
-    { id: 'instagram', name: 'Instagram Caption', icon: Image, color: '#E4405F' }
-  ];
+     { id: 'tweet', name: 'Twitter Thread', icon: Twitter, color: '#1DA1F2' },
+     { id: 'linkedin', name: 'LinkedIn Post', icon: Linkedin, color: '#0A66C2' },
+     { id: 'video', name: 'Video Script', icon: Video, color: '#FF0000' },
+     { id: 'instagram', name: 'Instagram Caption', icon: Image, color: '#E4405F' },
+     { id: 'email', name: 'Email Newsletter', icon: Mail, color: '#EA4335' },
+     { id: 'blog', name: 'Blog Post Intro', icon: FileCode, color: '#6366F1' },
+     { id: 'podcast', name: 'Podcast Script', icon: Mic, color: '#8B5CF6' },
+     { id: 'tiktok', name: 'TikTok Script', icon: TrendingUp, color: '#000000' },
+     { id: 'press', name: 'Press Release', icon: Newspaper, color: '#059669' },
+     { id: 'medium', name: 'Medium Article', icon: BookOpen, color: '#000000' }
+   ];
 
   const tones = [
     { id: 'professional', name: 'Professional', emoji: '💼' },

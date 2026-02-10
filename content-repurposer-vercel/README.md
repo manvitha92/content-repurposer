@@ -138,10 +138,6 @@ MIT License - feel free to use this project for personal or commercial purposes!
 
 Found a bug or have a feature request? Open an issue on GitHub!
 
-## Author
-
-Built with ❤️ using Claude AI
-
 ---
 
 **Ready to transform your content? Deploy now and start repurposing!** 🚀

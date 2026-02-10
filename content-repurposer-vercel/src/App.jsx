@@ -8,6 +8,7 @@ export default function ContentRepurposer() {
   const [inputContent, setInputContent] = useState('');
   const [selectedFormats, setSelectedFormats] = useState(['tweet']);
   const [tone, setTone] = useState('professional');
+  const [language, setLanguage] = useState('en');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [copiedIndex, setCopiedIndex] = useState(null);
@@ -34,7 +35,17 @@ export default function ContentRepurposer() {
     { id: 'educational', name: 'Educational', emoji: '📚' },
     { id: 'humorous', name: 'Humorous', emoji: '😄' }
   ];
-
+  // ENHANCED: Multi-language support
+  const languages = [
+  { id: 'en', name: 'English', flag: '🇺🇸' },
+  { id: 'es', name: 'Spanish', flag: '🇪🇸' },
+  { id: 'fr', name: 'French', flag: '🇫🇷' },
+  { id: 'de', name: 'German', flag: '🇩🇪' },
+  { id: 'pt', name: 'Portuguese', flag: '🇧🇷' },
+  { id: 'it', name: 'Italian', flag: '🇮🇹' },
+  { id: 'ja', name: 'Japanese', flag: '🇯🇵' },
+  { id: 'zh', name: 'Chinese', flag: '🇨🇳' }
+];
   // Load history on mount
   useEffect(() => {
     loadHistory();

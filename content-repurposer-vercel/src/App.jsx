@@ -101,7 +101,8 @@ export default function ContentRepurposer() {
         body: JSON.stringify({
           content: inputContent,
           formats: selectedFormats,
-          tone: tone
+          tone: tone,
+          language: language
         })
       });
 
@@ -509,7 +510,34 @@ export default function ContentRepurposer() {
                     ))}
                   </div>
                 </div>
-
+                {/* Language Selection */}
+<div style={{ marginTop: '2rem' }}>
+  <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#2d3748', marginBottom: '1rem' }}>
+    🌍 Choose Language
+  </h3>
+  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+    {languages.map((lang) => (
+      <button
+        key={lang.id}
+        onClick={() => setLanguage(lang.id)}
+        style={{
+          padding: '0.75rem 1.5rem',
+          background: language === lang.id ? '#667eea' : '#f7fafc',
+          color: language === lang.id ? '#fff' : '#4a5568',
+          border: 'none',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          fontWeight: '600',
+          fontSize: '1rem',
+          transition: 'all 0.3s',
+          boxShadow: language === lang.id ? '0 8px 20px rgba(102, 126, 234, 0.4)' : 'none'
+        }}
+      >
+        {lang.flag} {lang.name}
+      </button>
+    ))}
+  </div>
+</div>
                 {/* Generate Button */}
                 <button
                   onClick={repurposeContent}

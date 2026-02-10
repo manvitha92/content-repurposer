@@ -756,7 +756,7 @@ export default function ContentRepurposer() {
         color: 'rgba(255,255,255,0.8)',
         fontSize: '0.95rem'
       }}>
-        <p>Built with Claude AI • Transform once, publish everywhere 🚀</p>
+        <p>Built with Manvitha • Transform once, publish everywhere 🚀</p>
       </div>
     </div>
   );

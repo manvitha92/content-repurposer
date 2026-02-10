@@ -590,18 +590,6 @@ export default function ContentRepurposer() {
                 <Sparkles size={28} color="#667eea" />
                 Repurposed Content
               </h2>
-              <h2 style={{ 
-                fontSize: '1.75rem', 
-                fontWeight: '600',
-                color: '#1a202c',
-                marginBottom: '2rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem'
-              }}>
-                <Sparkles size={28} color="#667eea" />
-                Repurposed Content
-              </h2>
 
               {/* ADD THIS EXPORT TOOLBAR */}
               <div style={{
